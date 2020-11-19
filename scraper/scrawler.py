@@ -1,0 +1,123 @@
+from bs4  import BeautifulSoup
+import re
+import scrapy
+from scrapy import Request
+import json
+
+from axelle_main_2 import get_urls
+
+# scrapy runspider scrawler.py -o stocks.csv
+class MySpider(scrapy.Spider):
+    name = "immoscrap"
+    start_urls = get_urls()
+
+    def start_requests(self):
+        for url in self.start_urls:
+            yield Request(url=url, callback=self.parse)#Voir la doc scrapy. https://docs.scrapy.org/en/latest/intro/tutorial.html
+
+    def parse(self, response):
+        url = str(response.url)
+        # url_part = url.split("/")
+
+        for sub in response.xpath("(//main[@id='main-content'])[1]"):
+            #nos données sont dans  la balise script
+            source = response.text
+            soup = BeautifulSoup(source, 'lxml')
+            head_tag = soup.head
+            stuff = (head_tag.script)
+
+            #la balise script est un objet de type str on  peut donc lui appliquer certaines methodes
+            #en fin de code c'est la methode  d'Axelle
+            remove_window = str(stuff).split("[")                               #
+            remove_window.pop(0)                                                #
+            join_v1 = "".join(remove_window)                                    # Toutes ces opérations ont pour but de nettoyer la
+            remove_window_2 = str(join_v1).split("]")                           # balise script afin  d'arriver à un  iterable.
+            remove_window_2.pop(-1)                                             #
+                                                                                #
+            final = []                                                          #
+            for elem in remove_window_2:                                        #
+                final.append(elem.strip())                                      #
+            x = "".join(final)                                                  #
+            reg1 = re.findall(r'".*"',x)                                        #
+            list_data = reg1[6:-10]                                             #Tu peux bidouiller  dans le script tree_valid.py pour voir ce que ça raconte
+
+            #Une fois nettoyée, on récupère les données dans l'itérable
+            dict_json = {}
+            for data in  list_data:
+                if not ":"in data:
+                    continue
+                splitting = data.split(":")
+                key = splitting[0][1:-1]
+                value = splitting[1][2:-1]
+                if dict_json.get(key):
+                    if "type" in key:
+                        dict_json["cuisine_type"]=value
+                        continue
+                    if "id" in key:
+                        dict_json["short_id"]= value
+                        continue
+                if "count" in key:
+                    dict_json["room_number"]=value
+                    continue
+                if "name" in key:
+                    dict_json["company_name"]=value
+                    continue
+                if "exists" in key:
+                    continue
+                if " " in value:
+                    dict_json[key]="False"
+                dict_json[key]=value
+
+            #getting  dimensions
+            try:
+                description_el = soup.find('p', attrs={'class': ['classified__information--property']})#BeautifulSoup method
+                descriptions = list(description_el.stripped_strings)#list + BeautifulSoup method
+                description = " ".join(descriptions) if descriptions else "" #vire les espace vides
+                try:
+                    m2 = description.split("|")[1].strip().split()[0]
+                    dict_json["m2"]= m2
+                except IndexError:
+                    m2 = description.split()[0]
+                    dict_json["m2"]=m2
+            except AttributeError:
+                pass
+
+            #Location:
+            locality = url.split("/")[-3]
+            dict_json["commune"]=locality
+
+            yield dict_json #voir la doc  de scrapy pour avoir une  idée de ce qui se passe
+
+
+            '''
+            s = str(soup.head.script.contents[0])
+            s = s.replace('window.dataLayer = [', "")
+            s = s.replace("];", "")
+
+            s_dict = json.loads(s)
+            classified = s_dict["classified"]
+            # print(classified)
+
+            id = int(classified["id"])
+            type_building = classified["type"]
+            price = classified["price"]
+            kitchen = classified["kitchen"]["type"]
+            bedroom = classified["bedroom"]["count"]
+            garden = classified["outdoor"]["garden"]["surface"]
+            terrace = classified["outdoor"]["terrace"]["exists"]
+            wimmingPool = classified["wellnessEquipment"]["hasSwimmingPool"]
+            parking_indoor: classified["parkingSpaceCount"]["indoor"]
+            parking_outdoor: classified["parkingSpaceCount"]["outdoor"]
+            title = str(sub.xpath("//div[@id='classified-description-content-text']//strong[1]/text()[last()]").get()).strip()
+            surface =  str(sub.xpath("//th[text()[normalize-space()='Surface habitable']]/following::table/tbody[1]/tr[1]/th[1]/following-sibling::td/text()[1]").get()).strip()
+
+            yield{
+
+                "id":id,
+                "type":type_building,
+                "title" : title,
+                "surface" : surface,
+                "url": url
+            }
+            '''            
+                    
