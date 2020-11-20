@@ -25,7 +25,7 @@ In  the folder run in a terminal
 
 ``` scrapy runspider scrawler.py -o stocks.csv``` 
 
-will save the result in a ostock.csv file
+will save the result in a stock.csv file
 
-Number of pages scrapped are changeable in axelle_main
-in the get_urls functions.
+Number of pages scrapped are changeable in getters.py
+in the get_appartement_urls function.
