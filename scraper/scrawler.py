@@ -1,9 +1,7 @@
-from bs4  import BeautifulSoup
 import re
+from bs4 import BeautifulSoup
 import scrapy
-from scrapy import Request
-import json
-
+from scrapy.http.request import Request
 from getters import get_urls
 
 # scrapy runspider scrawler.py -o stocks.csv
