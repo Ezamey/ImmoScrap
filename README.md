@@ -15,17 +15,14 @@ The needed libraries are in the requirement.txt
 
 **Currently implemented**
 
-- scrap the "appartement" research  result
+- scrap the apartment and house research  result
 
 **TODO**
 - scrap the others  research result
 
 ### Commande :
-In  the folder run in a terminal
+In  the folder "scraper" run in a terminal :
 
 ``` scrapy runspider scrawler.py -o stocks.csv``` 
 
 will save the result in a stock.csv file
-
-Number of pages scrapped are changeable in getters.py
-in the get_appartement_urls function.
