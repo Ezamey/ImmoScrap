@@ -4,20 +4,19 @@ import scrapy
 from scrapy import Request
 import json
 
-from axelle_main_2 import get_urls
+from getters import get_appartement_urls
 
 # scrapy runspider scrawler.py -o stocks.csv
 class MySpider(scrapy.Spider):
     name = "immoscrap"
-    start_urls = get_urls()
+    start_urls = get_appartement_urls()
 
     def start_requests(self):
         for url in self.start_urls:
-            yield Request(url=url, callback=self.parse)#Voir la doc scrapy. https://docs.scrapy.org/en/latest/intro/tutorial.html
+            yield Request(url=url, callback=self.parse)
 
     def parse(self, response):
         url = str(response.url)
-        # url_part = url.split("/")
 
         for sub in response.xpath("(//main[@id='main-content'])[1]"):
             #nos données sont dans  la balise script
@@ -26,8 +25,7 @@ class MySpider(scrapy.Spider):
             head_tag = soup.head
             stuff = (head_tag.script)
 
-            #la balise script est un objet de type str on  peut donc lui appliquer certaines methodes
-            #en fin de code c'est la methode  d'Axelle
+
             remove_window = str(stuff).split("[")                               #
             remove_window.pop(0)                                                #
             join_v1 = "".join(remove_window)                                    # Toutes ces opérations ont pour but de nettoyer la
@@ -39,7 +37,7 @@ class MySpider(scrapy.Spider):
                 final.append(elem.strip())                                      #
             x = "".join(final)                                                  #
             reg1 = re.findall(r'".*"',x)                                        #
-            list_data = reg1[6:-10]                                             #Tu peux bidouiller  dans le script tree_valid.py pour voir ce que ça raconte
+            list_data = reg1[6:-10]                                             #
 
             #Une fois nettoyée, on récupère les données dans l'itérable
             dict_json = {}
@@ -86,7 +84,7 @@ class MySpider(scrapy.Spider):
             locality = url.split("/")[-3]
             dict_json["commune"]=locality
 
-            yield dict_json #voir la doc  de scrapy pour avoir une  idée de ce qui se passe
+            yield dict_json 
 
 
             '''
