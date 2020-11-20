@@ -38,7 +38,7 @@ def __get_detail_urls__(search_value: str, nbr_pages: int) -> List:
         list: the list of the urls for the property searched
     """
     detail_urls = []
-    for i in range(nbr_pages):  # page results
+    for i in range(nbr_pages):
         # get a search page
         url = f"https://www.immoweb.be/fr/search-results/{search_value}/a-vendre?countries=BE&page={i}&orderBy=relevance"
         response = get(url)
