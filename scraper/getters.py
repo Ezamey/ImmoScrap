@@ -1,26 +1,64 @@
+from typing import List
 from requests import get
-from datetime import datetime
+from math import ceil
 
 
 def get_urls() -> list:
-    '''function to get urls from all section'''
-    detail_urls = []
-    search_values = ["appartement","house"]
+    """Get all the urls of details of the properties (for apartment and house)
+
+    Returns:
+        list: the list of the urls
+    """
+    search_values = ["apartment", "house"]
+    nbr_pages = 1  # TODO : get it dynamically
+    all_url = []
     for value in search_values:
-        for i in range(1):#page results
-            url = f"https://www.immoweb.be/fr/search-results/{value}/a-vendre?countries=BE&page={i}&orderBy=relevance"#génère une nouvelle url =égale une nouvelle page de recherche
-            response = get(url)
-            source = None
-            if response.status_code == 200:
-                source = response.json()
+        url = f"https://www.immoweb.be/fr/search-results/{value}/a-vendre?countries=BE&page=1&orderBy=relevance"
+        response = get(url)
+        source = None
+        if response.status_code == 200:
+            source = response.json()
 
-            if source:
-                results = source["results"]
-                for j in range(len(results)):
-                    id_ = results[j]["id"]
-                    locality = results[j]["property"]["location"]["locality"]
-                    postal_code = results[j]["property"]["location"]["postalCode"]
+        if source:
+            totalItems = source["totalItems"]
+            # number of elements in a page
+            nbr_elements = len(source["results"])
+            nbr_pages = ceil(totalItems/nbr_elements)
+            all_url += __get_detail_urls__(value,nbr_pages)
+    return all_url
 
-                    detail_urls.append(
-                        f"https://www.immoweb.be/fr/annonce/appartement/a-vendre/{locality}/{postal_code}/{id_}")#récupère toutes les liens sur la page de recherche
+def __get_detail_urls__(search_value: str, nbr_pages: int) -> list:
+    """construct each detail url
+
+    Args:
+        search_value (str): the property we search (apartment or gouse)
+        nbr_pages (int): the number of page for the property searched
+
+    Returns:
+        list: the list of the urls for the property searched
+    """
+    detail_urls = []
+    for i in range(nbr_pages):  # page results
+        # génère une nouvelle url =égale une nouvelle page de recherche
+        url = f"https://www.immoweb.be/fr/search-results/{search_value}/a-vendre?countries=BE&page={i}&orderBy=relevance"
+        response = get(url)
+        source = None
+        if response.status_code == 200:
+            source = response.json()
+
+        if source:
+            results = source["results"]
+            for j in range(len(results)):
+                id_ = results[j]["id"]
+                locality = results[j]["property"]["location"]["locality"]
+                postal_code = results[j]["property"]["location"]["postalCode"]
+
+                detail_urls.append(
+                    f"https://www.immoweb.be/fr/annonce/{search_value}/a-vendre/{locality}/{postal_code}/{id_}")  # récupère toutes les liens sur la page de recherche
     return detail_urls
+
+
+# TEST
+if __name__ == '__main__':
+    urls = get_urls()
+    print(len(urls))
