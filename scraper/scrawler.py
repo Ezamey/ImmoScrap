@@ -4,12 +4,12 @@ import scrapy
 from scrapy import Request
 import json
 
-from getters import get_appartement_urls
+from getters import get_urls
 
 # scrapy runspider scrawler.py -o stocks.csv
 class MySpider(scrapy.Spider):
     name = "immoscrap"
-    start_urls = get_appartement_urls()
+    start_urls = get_urls()
 
     def start_requests(self):
         for url in self.start_urls:
