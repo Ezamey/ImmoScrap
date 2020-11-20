@@ -16,19 +16,19 @@ class MySpider(scrapy.Spider):
     def parse(self, response):
         url = str(response.url)
 
-        for sub in response.xpath("(//main[@id='main-content'])[1]"):
-            #nos données sont dans  la balise script
+        for _ in response.xpath("(//main[@id='main-content'])[1]"):
             source = response.text
             soup = BeautifulSoup(source, 'lxml')
             head_tag = soup.head
+            #get the value from the script tag
             stuff = (head_tag.script)
 
 
             remove_window = str(stuff).split("[")                               #
             remove_window.pop(0)                                                #
-            join_v1 = "".join(remove_window)                                    # Toutes ces opérations ont pour but de nettoyer la
-            remove_window_2 = str(join_v1).split("]")                           # balise script afin  d'arriver à un  iterable.
-            remove_window_2.pop(-1)                                             #
+            join_v1 = "".join(remove_window)                                    # All these operations are intended to clean
+            remove_window_2 = str(join_v1).split("]")                           # the script tag in order
+            remove_window_2.pop(-1)                                             # to arrive at an iterable.
                                                                                 #
             final = []                                                          #
             for elem in remove_window_2:                                        #
@@ -37,7 +37,7 @@ class MySpider(scrapy.Spider):
             reg1 = re.findall(r'".*"',x)                                        #
             list_data = reg1[6:-10]                                             #
 
-            #Une fois nettoyée, on récupère les données dans l'itérable
+            
             dict_json = {}
             for data in  list_data:
                 if not ":"in data:
@@ -68,7 +68,7 @@ class MySpider(scrapy.Spider):
             try:
                 description_el = soup.find('p', attrs={'class': ['classified__information--property']})#BeautifulSoup method
                 descriptions = list(description_el.stripped_strings)#list + BeautifulSoup method
-                description = " ".join(descriptions) if descriptions else "" #vire les espace vides
+                description = " ".join(descriptions) if descriptions else "" #remove white space
                 try:
                     m2 = description.split("|")[1].strip().split()[0]
                     dict_json["m2"]= m2
@@ -83,37 +83,3 @@ class MySpider(scrapy.Spider):
             dict_json["commune"]=locality
 
             yield dict_json 
-
-
-            '''
-            s = str(soup.head.script.contents[0])
-            s = s.replace('window.dataLayer = [', "")
-            s = s.replace("];", "")
-
-            s_dict = json.loads(s)
-            classified = s_dict["classified"]
-            # print(classified)
-
-            id = int(classified["id"])
-            type_building = classified["type"]
-            price = classified["price"]
-            kitchen = classified["kitchen"]["type"]
-            bedroom = classified["bedroom"]["count"]
-            garden = classified["outdoor"]["garden"]["surface"]
-            terrace = classified["outdoor"]["terrace"]["exists"]
-            wimmingPool = classified["wellnessEquipment"]["hasSwimmingPool"]
-            parking_indoor: classified["parkingSpaceCount"]["indoor"]
-            parking_outdoor: classified["parkingSpaceCount"]["outdoor"]
-            title = str(sub.xpath("//div[@id='classified-description-content-text']//strong[1]/text()[last()]").get()).strip()
-            surface =  str(sub.xpath("//th[text()[normalize-space()='Surface habitable']]/following::table/tbody[1]/tr[1]/th[1]/following-sibling::td/text()[1]").get()).strip()
-
-            yield{
-
-                "id":id,
-                "type":type_building,
-                "title" : title,
-                "surface" : surface,
-                "url": url
-            }
-            '''            
-                    
