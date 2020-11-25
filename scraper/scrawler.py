@@ -20,13 +20,12 @@ class MySpider(scrapy.Spider):
 
         for _ in response.xpath("(//main[@id='main-content'])[1]"):
             source = response.text
-            soup = BeautifulSoup(source, 'lxml')
+            soup = BeautifulSoup(source, "lxml")
             head_tag = soup.head
             # get the value from the script tag
-            stuff = (head_tag.script)
+            stuff = head_tag.script
 
-            remove_window = str(stuff).split(
-                "[")                               #
+            remove_window = str(stuff).split("[")  #
             #
             remove_window.pop(0)
             # All these operations are intended to clean
@@ -36,8 +35,8 @@ class MySpider(scrapy.Spider):
             # to arrive at an iterable.
             remove_window_2.pop(-1)
             #
-            final = []                                                          #
-            for elem in remove_window_2:                                        #
+            final = []  #
+            for elem in remove_window_2:  #
                 #
                 final.append(elem.strip())
             #
@@ -68,8 +67,9 @@ class MySpider(scrapy.Spider):
 
             # getting  dimensions
             try:
-                description_el = soup.find('p', attrs={
-                                           'class': ['classified__information--property']})  # BeautifulSoup method
+                description_el = soup.find(
+                    "p", attrs={"class": ["classified__information--property"]}
+                )  # BeautifulSoup method
                 # list + BeautifulSoup method
                 descriptions = list(description_el.stripped_strings)
                 # remove white space
