@@ -45,26 +45,27 @@ To do that, just run the cleaning.ipynb file in your favorite IDE.
 The data are then saved in the "quick_clean.csv" file (This is the csv to use)
 
 The available field are:
-
-1. id
-1. type
-1. subtype
-1. price
-1. transactionType
-1. zip
-1. visualisationOption
-1. cuisine_type
-1. constructionYear
-1. condition
-1. heatingType
-1. room_number
-1. atticExists
-1. basementExists
-1. hasSwimmingPool
-1. short_id
-1. company_name
-1. mètres carrés
-1. commune
+```
+-  id
+-  type
+-  subtype
+-  price
+-  transactionType
+-  zip
+-  visualisationOption
+-  cuisine_type
+-  constructionYear
+-  condition
+-  heatingType
+-  room_number
+-  atticExists
+-  basementExists
+-  hasSwimmingPool
+-  short_id
+-  company_name
+-  mètres carrés
+-  commune
+```
 
 <hr>
 02/12/2020
