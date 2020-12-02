@@ -24,8 +24,9 @@ class MySpider(scrapy.Spider):
             head_tag = soup.head
             # get the value from the script tag
             stuff = head_tag.script
-
-            remove_window = str(stuff).split("[")  #
+            
+            ##
+            remove_window = str(stuff).split("[")  
             #
             remove_window.pop(0)
             # All these operations are intended to clean
