@@ -14,17 +14,24 @@ ImmoScrap is  script using scrapy and  BeautifulSoup to scrap data from the Immo
 
 **Currently implemented**
 
-- scrap the apartment and house for sale in Belgium
+- Scrap the apartment and house for sale in Belgium
 - Save the result in a CSV file
 - Clean the result
 
 **TODO**
-- scrap the others  research result
+- Scrap the others  research result
 
 
 ## Python Libraries
 
-The needed libraries are in the requirement.txt
+The needed libraries are in the `requirement.txt`.
+To install it, use the command below:
+
+```python -m pip install -r requirements.txt```
+
+*Links to the official documentation of libraries :*
+- [BeautifulSoup](https://beautiful-soup-4.readthedocs.io/en/latest/)
+- [Scrapy](https://docs.scrapy.org/en/latest/)
 
 
 ## Usage 
@@ -35,14 +42,14 @@ In  the folder "scraper" run in a terminal :
 
 ``` scrapy runspider scrawler.py -o stocks.csv``` 
 
-will save the result in a stock.csv file
+Will save the result in a `stock.csv` file
 
 
 - <u>*How to clean the csv*</u>
 
 If you want, you can clean the csv to remove irrelevant data and harmonize the remaining data.
-To do that, just run the cleaning.ipynb file in your favorite IDE.
-The data are then saved in the "quick_clean.csv" file (This is the csv to use)
+To do that, just run the `cleaning.ipynb` file in your favorite IDE.
+The data are then saved in the `quick_clean.csv` file (This is the csv to use)
 
 The available field are:
 ```
