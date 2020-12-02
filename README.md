@@ -32,6 +32,7 @@ To install it, use the command below:
 *Links to the official documentation of libraries :*
 - [BeautifulSoup](https://beautiful-soup-4.readthedocs.io/en/latest/)
 - [Scrapy](https://docs.scrapy.org/en/latest/)
+- [Pandas](https://pandas.pydata.org/docs/reference/index.html#api)
 
 
 ## Usage 
